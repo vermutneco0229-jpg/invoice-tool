@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+
+# Obsidian - user-specific files (not shared)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+
+# Large binary files (PDFs tracked separately if needed)
+*.pdf
+
+# Generated docs build output
+docs/public/
+docs/resources/
