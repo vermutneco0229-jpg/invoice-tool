@@ -1,0 +1,22 @@
+baseURL = "https://vermutneco0229-jpg.github.io/ai-project-notes/"
+languageCode = "ja"
+title = "Knowledge Base"
+theme = "PaperMod"
+
+[params]
+  defaultTheme = "auto"
+  ShowShareButtons = false
+  ShowReadingTime = true
+  ShowBreadCrumbs = true
+  ShowPostNavLinks = true
+
+[params.homeInfoParams]
+  Title = "ナレッジベース"
+  Content = "Obsidianノートから自動生成されたドキュメント"
+
+[markup]
+  [markup.highlight]
+    style = "monokai"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

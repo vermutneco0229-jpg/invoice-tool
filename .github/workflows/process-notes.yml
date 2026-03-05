@@ -1,0 +1,65 @@
+name: Process Obsidian Notes with Gemini
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.md'
+      - '!docs/**'
+      - '!.github/**'
+      - '!Templates/**'
+
+jobs:
+  process:
+    # Skip bot commits to prevent infinite loops
+    if: "!startsWith(github.event.head_commit.message, '[bot]')"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: .github/scripts/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r .github/scripts/requirements.txt
+
+      - name: Get changed markdown files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only HEAD~1 HEAD -- '*.md' \
+            ':!docs/*' ':!.github/*' ':!Templates/*' 2>/dev/null || echo "")
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "Changed files: $FILES"
+
+      - name: Process notes with Gemini
+        if: steps.changed.outputs.files != ''
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
+        working-directory: ${{ github.workspace }}
+        run: |
+          cd $GITHUB_WORKSPACE
+          PYTHONPATH=.github/scripts python .github/scripts/process_notes.py
+
+      - name: Commit and push processed notes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "[bot] AI処理完了: frontmatter更新・関連ノートリンク追加"
+            git push
+          fi
