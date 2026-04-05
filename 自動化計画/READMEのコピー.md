@@ -3,7 +3,7 @@ ai_summary: ''
 ai_tags: []
 ai_related_notes: []
 ai_content_hash: 3d6b88af168a2d7137a8901f689404541b7a1c1cb0df4b90514a126425e017ea
-ai_processed_at: '2026-03-29T05:14:36Z'
+ai_processed_at: '2026-04-05T05:16:26Z'
 ai_model: gemini-2.0-flash
 ---
 # URURIA 発注管理システム ― 導入手順
